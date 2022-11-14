@@ -111,7 +111,7 @@ app.get("/messages", async (req, res) => {
 
     try{
 
-        const messages = (await db.collection('messages').find().limit(limit).toArray()).reverse()
+        const messages = (await db.collection('messages').find().limit(limit).toArray())
 
         messages.forEach(message => {
             if(message.to === 'Todos' || message.to === user || message.from === user){

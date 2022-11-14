@@ -12,9 +12,6 @@ app.use(cors())
 
 const mongoClient = new MongoClient(process.env.MONGO_URI)
 let db = mongoClient.db("bate_papo_uol")
-/* mongoClient.connect(() => {
-    db = mongoClient.db("bate_papo_uol")
-}) */
 
 const participantSchema = joi.object({
     name: joi.string().min(3).required()
@@ -56,7 +53,7 @@ app.post("/participants", async (req, res) => {
                                                     
         res.sendStatus(200)
     } catch (err){
-        res.sendStatus(err)
+        res.sendStatus(500)
     }
 })
 
@@ -80,6 +77,7 @@ app.post("/messages", async (req, res) => {
 
     if(validation.error){
         res.sendStatus(422)
+        return
     }
 
     try {
@@ -87,6 +85,7 @@ app.post("/messages", async (req, res) => {
 
         if(!participant){
             res.status(422).send('Participante desconectado')
+            return
         }
         await db.collection('messages').insertOne({
             from: user,
@@ -112,7 +111,7 @@ app.get("/messages", async (req, res) => {
 
     try{
 
-        const messages = (await db.collection('messages').find().toArray())
+        const messages = await db.collection('messages').find().toArray()
 
         if(limit){
             for(let i=0; i<limit; i++){
@@ -134,7 +133,7 @@ app.get("/messages", async (req, res) => {
 
     } catch (err) {
 
-        res.send(err)
+        res.status(500)
     }
 })
 
@@ -145,6 +144,7 @@ app.post("/status", async (req, res) => {
 
     if(!isOnline){
         res.sendStatus(404)
+        return
     }
 
     try {
@@ -200,6 +200,7 @@ app.delete("/messages/:ID_DA_MENSAGGEM", async (req, res)=>{
 
     if(!message){
         res.sendStatus(404)
+        return
     }
 
     if(user !== message.from){

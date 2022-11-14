@@ -107,17 +107,17 @@ app.post("/messages", async (req, res) => {
 app.get("/messages", async (req, res) => {
 
     const limit = req.query.limit
-    const user = req.headers.name
+    const user = req.headers.user
     const showMessages = []
 
     try{
 
-        const messages = (await db.collection('messages').find().toArray()).reverse()
+        const messages = (await db.collection('messages').find().toArray())
 
         if(limit){
             for(let i=0; i<limit; i++){
                 if(messages[i].to === user || messages[i].to === 'Todos' || messages[i].from === user){
-                    showMessages.unshift(messages[i])
+                    showMessages.push(messages[i])
                 }
             }
             res.send(showMessages)
@@ -126,7 +126,7 @@ app.get("/messages", async (req, res) => {
 
         messages.forEach(message => {
             if(message.to === 'Todos' || message.to === user || message.from === user){
-                showMessages.unshift(message)
+                showMessages.push(message)
             }
         });
 

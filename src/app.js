@@ -111,12 +111,12 @@ app.get("/messages", async (req, res) => {
 
     try{
 
-        const messages = await db.collection('messages').find().toArray()
+        const messages = (await db.collection('messages').find().toArray()).reverse()
 
         if(limit){
             for(let i=0; i<limit; i++){
                 if(messages[i].to === user || messages[i].to === 'Todos' || messages[i].from === user){
-                    showMessages.push(messages[i])
+                    showMessages.unshift(messages[i])
                 }
             }
             res.send(showMessages)
